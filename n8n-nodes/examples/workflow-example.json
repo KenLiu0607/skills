@@ -1,0 +1,435 @@
+{
+  "name": "Generate English Examples",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# 角色設定 (Role)\n\n你是一位專為 6 歲台灣兒童設計的 AI 雙語教學助理。你的核心任務是分析輸入圖片（包含文字內容或純圖像場景），並產生嚴格符合格式的 JSON 教學資料。\n\n# 處理邏輯與分類 (Processing Logic)\n\n請分析圖片內容並歸類 type (可同時存在不同的 type), 執行對應動作：\n\n## 1. 類型 A：問答題\n\n- **觸發條件**：圖片中包含問號「?」或括號提示詞（例如 `(blue)`, `(10元)`）。\n- **執行動作**：\n    1. 提取「問題」文本。\n    2. 根據括號提示或圖片情境，組合成一個完整的「英文回答句」（Full Sentence）。\n    3. 將問題與回答皆翻譯為「台灣繁體中文」。\n- **輸出格式**：`type: \"qa\"`, 內容角色: `[\"question\", \"answer\"]`\n\n## 2. 類型 B：看圖說故事\n\n- **觸發條件**：圖片清晰，有具體主角或動作，但「沒有可識別的文字」。\n- **執行動作**：\n    1. 觀察圖片情境，生成多個段落英文故事描述句（Descriptive Sentence）。\n    2. 英文句子翻譯為「台灣繁體中文」。\n- **輸出格式**：`type: \"story\"`, 內容角色: `[\"description\"]`\n\n## 3. 類型 C：一般句子\n\n- **觸發條件**：圖片中為一般英文陳述句、填空題（例如 `I ___ a cat`）或漫畫對話。\n- **執行動作**：\n    1. 提取句子（若是填空題，請填入正確單字使其完整）。\n    2. 英文句子翻譯為「台灣繁體中文」。\n- **輸出格式**：`type: \"sentence\"`, 內容角色: `[\"statement\"]`\n\n## 4. 類型 D：中文翻譯\n\n- **觸發條件**：圖片中「只有中文字」（例如菜單、課表、招牌）。\n- **執行動作**：\n    1. 將其核心意義翻譯為英文句子（主詞+動詞+受詞）。\n    2. 英文句子翻譯為「台灣繁體中文」。\n- **輸出格式**：`type: \"sentence\"`, 內容角色: `[\"statement\"]`\n\n\n\n# 內容約束 (Constraints)\n\n1. **目標受眾**：6 歲兒童。\n    - 英文：使用 CEFR Pre-A1 程度單字，句型簡單。\n    - 中文：必須是「台灣繁體中文」，語氣自然親切（例如用「小狗」而非「犬」）。\n2. **語法正確性**：確保生成的英文句子文法完全正確。\n3. **安全性與例外**：若圖片模糊、空白或內容不適宜（暴力/成人），請直接回傳 `{\"items\": []}`。\n\n# 輸出格式 (Output Format)\n\n- 僅回傳一個合法的 **JSON 物件**。\n- **嚴禁**在 JSON 前後添加任何解釋性文字。\n\n## JSON 結構範例 (Schema Example)\n\n請嚴格參照此結構：\n\n```json\n{\n    \"meta\": { model : {LLM Model Name} },\n    \"items\": [\n        {\n            \"type\": \"qa\",\n            \"content\": [\n                {\n                    \"id\": \"1\",\n                    \"role\": \"question\",\n                    \"text\": {\n                        \"en\": \"What emotion does this emoji show?\",\n                        \"zh\": \"這個表情符號表示什麼情緒？\"\n                    }\n                },\n                {\n                    \"id\": \"2\",\n                    \"role\": \"answer\",\n                    \"text\": {\n                        \"en\": \"It shows happiness.\",\n                        \"zh\": \"它表示高興。\"\n                    }\n                },\n                {\n                    \"id\": \"3\",\n                    \"role\": \"question\",\n                    \"text\": {\n                        \"en\": \"What emotion does this character show?\",\n                        \"zh\": \"這個角色表示什麼情緒？\"\n                    }\n                },\n                {\n                    \"id\": \"4\",\n                    \"role\": \"answer\",\n                    \"text\": {\n                        \"en\": \"It shows anger.\",\n                        \"zh\": \"它表示生氣。\"\n                    }\n                }\n            ]\n        },\n        {\n            \"type\": \"story\",\n            \"content\": [\n                {\n                    \"id\": \"5\",\n                    \"role\": \"description\",\n                    \"text\": {\n                        \"en\": \"Two little girls are standing near a deer.\",\n                        \"zh\": \"兩個小女孩正站在一隻鹿旁邊。\"\n                    }\n                },\n                {\n                    \"id\": \"6\",\n                    \"role\": \"description\",\n                    \"text\": {\n                        \"en\": \"There are palm trees in the background.\",\n                        \"zh\": \"背景有棕櫚樹。\"\n                    }\n                }\n            ]\n        },\n        {\n            \"type\": \"sentence\",\n            \"content\": [\n              {\n                    \"id\": \"7\",\n                    \"role\": \"description\",\n                    \"text\": {\n                        \"en\": \"They chatted happily together.\",\n                        \"zh\": \"他們在一起開心的聊天。\"\n                    }\n                }\n            ]\n        }\n    ]\n}\n\n```\n",
+          "maxIterations": 10,
+          "returnIntermediateSteps": true,
+          "passthroughBinaryImages": true,
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        496,
+        464
+      ],
+      "id": "4312f3ad-5aa3-43b1-8a32-55cae4a07aab",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"sessionId\": {{$execution.id}},\n  \"chatInput\" :{{ $json.body }}\n}\n",
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        464
+      ],
+      "id": "ef2dfba4-f97a-499f-b110-2849a85a8ec1",
+      "name": "SessionId",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        448,
+        640
+      ],
+      "id": "e878c182-b647-46a6-968e-fc935bc20ba1",
+      "name": "Google Gemini Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "f3y2M4YI8rZSs5m7",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "meta.userid",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1408,
+        448
+      ],
+      "id": "3d20c7bb-d116-4af3-a0c0-9e53bae4aecc",
+      "name": "Merge",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "/*\n    \"en-US-JennyNeural\",\"en\",\"美式女聲 (清晰)\"\n    \"en-US-AnaNeural\",\"en\",\"美式女聲 (輕盈)\"\n    \"en-GB-SoniaNeural\",\"en\",\"英式女聲\"\n    \"zh-TW-HsiaoChenNeural\",\"zh\",\"台灣中文女聲\"\n    \"zh-TW-YunJheNeural\",\"zh\",\"台灣中文男聲\"\n*/\nconst option = {\n  userid: \"Ken.liu\", //使用者名稱\n  voice: {\n    en: { id: \"en-US-JennyNeural\", rate: \"-50%\" },\n    zh: { id: \"zh-TW-HsiaoChenNeural\", rate: \"+0%\" },\n  },\n};\n\n// 將 AI 生成的 ```Json ``` 移除, 變成 JSON\nlet rawOutput = $input.first().json.output;\nlet jsonObj = JSON.parse(\n  rawOutput.replace(/^```json\\s*/i, \"\").replace(/\\s*```$/, \"\"),\n);\n\nconst result = {\n  meta: {\n    userid: option.userid,\n    voice: option.voice,\n    rate: option.rate,\n    model: jsonObj.meta.model,\n  },\n  items: jsonObj.items,\n};\nconsole.log(result);\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        464
+      ],
+      "id": "8087b54e-9af5-4ad3-bd39-9545335fca3f",
+      "name": "Settings"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1808,
+        448
+      ],
+      "id": "ba1bc8d5-81f1-48a2-b523-3e49f24bc7a5",
+      "name": "Speak Respond"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Merge Restore Items 與 TTS POST\nconst data = $input.first().json;\n\nconst mapVoice = {};\nif (data.voices && Array.isArray(data.voices)) {\n  data.voices.forEach((v) => {\n    mapVoice[v.id] = {\n      filename: v.filename,\n      url: v.url,\n    };\n  });\n}\nconst newItms = data.items.map((item) => {\n  const newItem = item.content.map((con) => {\n    return {\n      ...con,\n      filename: mapVoice[con.id].filename,\n      url: mapVoice[con.id].url,\n    };\n  });\n  return {\n    type: item.type,\n    content: newItem,\n  };\n});\n\nreturn {\n  meta: data.meta,\n  items: newItms,\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        448
+      ],
+      "id": "ef329a74-cc1c-47a5-8c21-cf4942b4dbe1",
+      "name": "Mapping",
+      "executeOnce": true
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        640
+      ],
+      "id": "5e59ff72-6802-4d5f-923b-a0abdea3e6f7",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "speak",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*",
+          "binaryPropertyName": "image"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        48,
+        320
+      ],
+      "id": "166d596d-d5ab-4cc7-a06a-5c77e6de3dee",
+      "name": "Speak Hook",
+      "webhookId": "3db1fcf2-babf-498c-b1c9-7053228c08bd"
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        496,
+        192
+      ],
+      "id": "155bfd22-0271-4908-8847-662742a8e9de",
+      "name": "Audio Respond"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=http://api-speak:8000/speak/{{ $json.meta.userid }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1040,
+        304
+      ],
+      "id": "4eb84275-1a4e-4bc3-a4e2-89a68e9b5a3f",
+      "name": "DELETE",
+      "executeOnce": true,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## 取得語音檔 MP3",
+        "height": 208,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        304,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "56a4af23-14e3-4457-9466-0609038549a8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 先刪後加 Edge TTS",
+        "height": 224,
+        "width": 352,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "e1eeaf4a-f807-4c57-af54-8bf270503b35",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api-speak:8000/speak",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "meta",
+              "value": "={{ $('Settings').item.json.meta }}"
+            },
+            {
+              "name": "items",
+              "value": "={{ $('Settings').item.json.items }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1200,
+        304
+      ],
+      "id": "866b3bb5-29b2-428b-b78d-9833d32bdc5d",
+      "name": "POST"
+    },
+    {
+      "parameters": {
+        "url": "=http://api-speak:8000/speak/{{ $json.query.userid }}/{{ $json.query.filename }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        336,
+        192
+      ],
+      "id": "8e74c65d-75eb-427e-8de7-fea24a2a77e7",
+      "name": "Speak GET"
+    },
+    {
+      "parameters": {
+        "content": "## Gemini 生成中英文語句\n- LLM依照圖片內容生成自然的例句\n- 情境可以分為 QA 、故事劇情、語意猜測",
+        "height": 416,
+        "width": 448,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        304,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "1d3bdf43-b72e-4fe1-bfdc-9dc4bff3d8a2",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "SessionId": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "DELETE",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Mapping": {
+      "main": [
+        [
+          {
+            "node": "Speak Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Speak Hook": {
+      "main": [
+        [
+          {
+            "node": "Speak GET",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SessionId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DELETE": {
+      "main": [
+        [
+          {
+            "node": "POST",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Speak GET": {
+      "main": [
+        [
+          {
+            "node": "Audio Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8eb4eb24-0dda-452e-a35b-827acaf9e199",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "782e17b1beb80246cdbf3c9e6270fa07f7e35a1e8546ded92aac46f2be17defb"
+  },
+  "id": "pGK9rtgjz7a8J1Vz205bT",
+  "tags": [
+    {
+      "name": "AI",
+      "id": "8NAfUFezWmywGb5x",
+      "updatedAt": "2026-02-10T12:51:41.657Z",
+      "createdAt": "2026-02-10T12:51:41.657Z"
+    }
+  ]
+}

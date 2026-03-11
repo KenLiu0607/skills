@@ -1,0 +1,17 @@
+# Python 虛擬環境
+venv/
+env/
+ENV/
+
+# Python 快取與編譯檔案
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 專案產生的暫存與輸出檔案
+temp/
+doc/
+
+# 環境變數設定檔
+.env
