@@ -1,5 +1,5 @@
 ---
-name: Notion to docx
+name: notion2docx
 description: This skill can be used when users need to convert Notion pages to Microsoft Word (.docx) files. This skill preserves formatting, colors, and tables, and converts LaTeX formulas to editable OMML Word formulas.
 ---
 
