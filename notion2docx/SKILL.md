@@ -21,7 +21,7 @@ Find the ID matching the title provided by the user from the output.
 Automatically process dependencies and execute the main script using the `uv` command. The script will automatically fetch the Notion page title and use it as the filename.
 
 ```powershell
-uv run --with-requirements requirements.txt python -B main.py <page_id_or_database_id> -o "<output_directory>"
+uv run --with-requirements requirements.txt python -B main.py <page_id> -o "<output_directory>"
 ```
 
 > [!Prompt]
@@ -40,14 +40,9 @@ uv run --with-requirements requirements.txt python -B main.py 31ea7038c2628087b1
 This script will automatically perform the following operations:
 
 1. Search for the Notion title to use as the output filename.
-
-2. Determine whether the ID is a database or a page.
-
-3. Retrieve Notion content and generate HTML.
-
-4. Convert HTML to DOCX via Microsoft Word COM.
-
-5. Inject natively editable mathematical formulas (MathML → OMML).
+2. Retrieve Notion content and generate HTML.
+3. Convert HTML to DOCX via Microsoft Word COM.
+4. Inject natively editable mathematical formulas (MathML → OMML).
 
 ### Step 3: Report Output
 
