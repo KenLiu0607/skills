@@ -5,6 +5,16 @@ description: This skill can be used when users need to convert Notion pages to M
 
 # Notion to DOCX Conversion Guide
 
+### Prerequisites & Compatibility
+
+> [!Important]
+> **Environment Check (AI Diagnostic Reference)**:
+> This skill relies on a local Python environment and Windows-specific software. Before execution, ensure:
+> 1. **Microsoft Word**: Must be installed on Windows (used for rendering).
+> 2. **Pandoc**: Must be installed and added to the system PATH (used for formula conversion).
+> 3. **Python & uv**: Requires `uv` package manager for dependency handling.
+> 4. **NOTION_API_KEY**: Must be set in system environment variables with page access.
+
 ### Step 1: Obtain the Notion Page/Repository ID
 
 - **If the user did not provide an ID (32-bit string)**: Search for the ID using the `uv` command:
