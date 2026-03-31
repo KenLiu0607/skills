@@ -1,10 +1,36 @@
-# Skills
+# 技能列表 (Skills)
 
-這是一個專門存放 AI Agent 擴充技能的專案。透過這些預設好的技能設計，Agent 能夠為您處理各式各樣的任務，專案開發秉持**低耦合、高擴充、易維護**的原則，並在原始碼中都有清楚的註解。
+此目錄存放了開發輔助相關的 AI Agent 技能。透過這些技能，Agent 能夠自動化處理複雜的技術任務，並確保產出符合一致的規格與標準。
 
 ---
 
-## notion2docx
+## 1. ppt-compress
+- **簡介**：專門用於壓縮 PPT/PPTX 檔案大小。適合需要分享或上傳大型簡報檔案的場景。
+- **核心功能**：
+    - **解壓分析**：將 PPTX 視為 ZIP 格式解壓以提取媒體檔案。
+    - **圖片壓縮**：自動壓縮超過 1MB 的圖片。
+    - **格式轉換**：重新打包並使用 LibreOffice 轉換為體積更小的 PDF 版本。
+- **依賴工具**：Python 3, sips (macOS 內建), LibreOffice。
+
+## 2. sa-architect
+- **簡介**：具備架構感知能力的通用型 SA 文件工具。能從開發脈絡中逆向產出或更新標準化的 Markdown SA 文件。
+- **核心階段**：
+    - **開發脈絡掃描**：分析 Git 歷史紀錄（Log/Show）與異動人員，提取業務邏輯。
+    - **範本規格同步**：嚴格遵循 `references/template.md` 的章節結構。
+    - **規格提取**：掃描 UI 配置（Vue/React/HTML）與 DB 定義，比對前後端驗證邏輯。
+    - **自動化維護**：自動更新版本紀錄與需求單號。
+- **輸出原則**：支援輸出至 Notion Space 或本地端目錄。
+
+## 3. sql-optimization
+- **簡介**：跨資料庫（MySQL, PostgreSQL, SQL Server, Oracle）的通用 SQL 性能優化助手。
+- **優化領域**：
+    - **查詢分析**：識別低效的查詢模式並提供優化建議。
+    - **索引策略**：針對複合索引、覆蓋索引（Covering Index）與部分索引進行優化設計。
+    - **架構改進**：包含子查詢轉視窗函數、JOIN 順序調校、分頁優化（Cursor-based）以及批次操作建議。
+    - **反模式識別**：偵測 `SELECT *`、WHERE 子句中的函數調用等影響效能的寫法。
+
+
+## 4. notion2docx
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Word](https://img.shields.io/badge/Microsoft-Word-blue?style=for-the-badge&logo=microsoftword&logoColor=white)](#)
@@ -29,3 +55,11 @@
    
 - **使用方法**：
   告訴 AI 需要把 Notion 上的頁面轉成 Word 檔案, 剩下的 AI 會幫你完成。
+
+
+---
+
+
+
+
+
