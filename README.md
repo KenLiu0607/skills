@@ -56,7 +56,7 @@
 - **使用方法**：
   告訴 AI 需要把 Notion 上的頁面轉成 Word 檔案, 剩下的 AI 會幫你完成。
 
-### `git commit` - 提交程式碼變更
+## 4. git commit
 
 `git commit` 指令用於將暫存區（staging area）中的變更永久地記錄到版本歷史中。每次提交都應該代表一個邏輯上獨立的變更單元，並附帶一個清晰、簡潔且具描述性的提交訊息（commit message）。
 
